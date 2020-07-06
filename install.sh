@@ -28,6 +28,7 @@ fi
 echo "Installing pwHelper as a service..."
 install -o0 -g0 -m555 etc/rc.d/pwhelper /usr/local/etc/rc.d
 sysrc pwhelper_enable="YES"
+sysrc pwhelper_home="$(pwd)"
 
 # Create self-signed SSL cert.
 echo "Generating SSL certificate for encryption..."
