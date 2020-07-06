@@ -28,10 +28,10 @@ fi
 echo "Installing pwHelper as a service..."
 install -o0 -g0 -m555 etc/rc.d/pwhelper /usr/local/etc/rc.d
 sysrc pwhelper_enable="YES"
-sysrc pwhelper_home=${PWD}
 
 # Create self-signed SSL cert.
 echo "Generating SSL certificate for encryption..."
+mkdir ./etc/ssl
 openssl req -x509 -newkey rsa:4096 -keyout etc/ssl/ssl.key -out etc/ssl/ssl.cer -days 730 -nodes -subj "/CN=$HOSTNAME"
 
 # Start the service
