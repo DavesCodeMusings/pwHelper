@@ -1,0 +1,58 @@
+#!/bin/sh
+
+# PROVIDE: pwhelper
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+#
+# Add these lines to /etc/rc.conf.local or /etc/rc.conf to enable pwhelper:
+#
+# pwhelper_enable (boolean):
+#   Set to YES to enable.
+# pwhelper_home (path):
+#   /root/pwhelper by default. Set to the parent path of pwhelper.js.
+#
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+. /etc/rc.subr
+name="pwhelper"
+desc="pwHelper"
+rcvar=pwhelper_enable
+load_rc_config $name
+: ${pwhelper_home:=/root/pwhelper}
+command_interpreter=node
+command=${pwhelper_home}/${name}.js
+command_args="${pwhelper_home}/${name}.js"
+pidfile=/var/run/${name}.pid
+pid=`pgrep -F /var/run/${name}.pid 2>/dev/null`
+
+start_cmd="${name}_start"
+stop_cmd="${name}_stop"
+status_cmd="${name}_status"
+
+pwhelper_start()
+{
+  if [ "$pid" == "" ]; then
+    ${command_interpreter} ${command_args} >>/var/log/${name}.log 2>&1 &
+  else
+    echo "${name} is already running as PID: $pid."
+  fi
+}
+
+pwhelper_status()
+{
+  if [ "$pid" != "" ]; then
+    echo "${name} is running as PID: $pid."
+  else
+    echo "${name} is not running."
+  fi
+}
+
+pwhelper_stop()
+{
+  if [ "$pid" != "" ]; then
+    pkill -F /var/run/${name}.pid
+  else
+    echo "${name} is not running."
+  fi
+}
+
+run_rc_command "$1"
